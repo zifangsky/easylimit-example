@@ -11,6 +11,7 @@ import cn.zifangsky.easylimit.example.mapper.SysRoleMapper;
 import cn.zifangsky.easylimit.example.mapper.SysUserMapper;
 import cn.zifangsky.easylimit.filter.impl.support.DefaultFilterEnums;
 import cn.zifangsky.easylimit.filter.impl.support.FilterRegistrationFactoryBean;
+import cn.zifangsky.easylimit.permission.aop.PermissionsAnnotationAdvisor;
 import cn.zifangsky.easylimit.realm.Realm;
 import cn.zifangsky.easylimit.session.SessionDAO;
 import cn.zifangsky.easylimit.session.SessionIdFactory;
@@ -19,6 +20,7 @@ import cn.zifangsky.easylimit.session.impl.AbstractWebSessionManager;
 import cn.zifangsky.easylimit.session.impl.MemorySessionDAO;
 import cn.zifangsky.easylimit.session.impl.support.CookieWebSessionManager;
 import cn.zifangsky.easylimit.session.impl.support.RandomCharacterSessionIdFactory;
+import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -106,7 +108,7 @@ public class EasyLimitConfig {
         patternPathFilterMap.put("/css/**", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
         patternPathFilterMap.put("/layui/**", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
         patternPathFilterMap.put("/test/greeting", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
-        patternPathFilterMap.put("/test/selectByUsername", new String[]{"perms[/aaa/bbb]"});
+//        patternPathFilterMap.put("/test/selectByUsername", new String[]{"perms[/aaa/bbb]"});
         //其他路径需要登录才能访问
         patternPathFilterMap.put("/**", new String[]{DefaultFilterEnums.LOGIN.getFilterName()});
 
@@ -129,5 +131,14 @@ public class EasyLimitConfig {
         filterRegistrationBean.setFilter(proxy);
         return filterRegistrationBean;
     }
+
+    /**
+     * 添加对权限注解的支持
+     */
+    @Bean
+    public PermissionsAnnotationAdvisor permissionsAnnotationAdvisor(){
+        return new PermissionsAnnotationAdvisor("execution(* cn.zifangsky..controller..*.*(..))");
+    }
+
 
 }

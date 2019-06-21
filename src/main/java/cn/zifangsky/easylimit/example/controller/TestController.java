@@ -4,6 +4,7 @@ import cn.zifangsky.easylimit.example.model.Greeting;
 import cn.zifangsky.easylimit.example.model.HelloMessage;
 import cn.zifangsky.easylimit.example.model.SysUser;
 import cn.zifangsky.easylimit.example.service.TestService;
+import cn.zifangsky.easylimit.permission.annotation.RequiresPermissions;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,7 @@ public class TestController {
     }
 
     @ResponseBody
+    @RequiresPermissions("/aaa/bbb")
     @RequestMapping(value = "/selectByUsername", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public SysUser selectByUsername(String username) {
         return testService.selectByUsername(username);
