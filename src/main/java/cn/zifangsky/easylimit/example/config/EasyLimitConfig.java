@@ -20,7 +20,6 @@ import cn.zifangsky.easylimit.session.impl.AbstractWebSessionManager;
 import cn.zifangsky.easylimit.session.impl.MemorySessionDAO;
 import cn.zifangsky.easylimit.session.impl.support.CookieWebSessionManager;
 import cn.zifangsky.easylimit.session.impl.support.RandomCharacterSessionIdFactory;
-import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,8 +52,13 @@ public class EasyLimitConfig {
      * 配置Realm
      */
     @Bean
-    public Realm realm(SysUserMapper sysUserMapper, SysRoleMapper sysRoleMapper, SysFunctionMapper sysFunctionMapper){
-        return new CustomRealm(sysUserMapper, sysRoleMapper, sysFunctionMapper);
+    public Realm realm(SysUserMapper sysUserMapper, SysRoleMapper sysRoleMapper, SysFunctionMapper sysFunctionMapper, Cache cache){
+        CustomRealm realm = new CustomRealm(sysUserMapper, sysRoleMapper, sysFunctionMapper);
+        //缓存角色、权限信息
+        realm.setEnablePermissionInfoCache(true);
+        realm.setPermissionInfoCache(cache);
+
+        return realm;
     }
 
     /**
