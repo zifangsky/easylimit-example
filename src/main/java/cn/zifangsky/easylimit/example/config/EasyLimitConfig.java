@@ -99,7 +99,11 @@ public class EasyLimitConfig {
      */
     @Bean
     public SecurityManager securityManager(Realm realm, SessionManager sessionManager){
-        return new DefaultWebSecurityManager(realm, sessionManager);
+        DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager(realm, sessionManager);
+        //踢出当前用户的旧会话
+        securityManager.setKickOutOldSessions(true);
+
+        return securityManager;
     }
 
     /**
