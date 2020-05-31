@@ -54,6 +54,10 @@ public class EasyLimitConfig {
     @Bean
     public Realm realm(SysUserMapper sysUserMapper, SysRoleMapper sysRoleMapper, SysFunctionMapper sysFunctionMapper, Cache cache){
         CustomRealm realm = new CustomRealm(sysUserMapper, sysRoleMapper, sysFunctionMapper);
+        //缓存主体信息
+        realm.setEnablePrincipalInfoCache(true);
+        realm.setPrincipalInfoCache(cache);
+
         //缓存角色、权限信息
         realm.setEnablePermissionInfoCache(true);
         realm.setPermissionInfoCache(cache);
@@ -115,10 +119,11 @@ public class EasyLimitConfig {
         LinkedHashMap<String, String[]> patternPathFilterMap = new LinkedHashMap<>();
         patternPathFilterMap.put("/css/**", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
         patternPathFilterMap.put("/layui/**", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
+        patternPathFilterMap.put("/index.html", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
         patternPathFilterMap.put("/test/greeting", new String[]{DefaultFilterEnums.ANONYMOUS.getFilterName()});
 //        patternPathFilterMap.put("/test/selectByUsername", new String[]{"perms[/aaa/bbb]"});
         //其他路径需要登录才能访问
-        patternPathFilterMap.put("/**", new String[]{DefaultFilterEnums.LOGIN.getFilterName()});
+        patternPathFilterMap.put("/**/*.html", new String[]{DefaultFilterEnums.LOGIN.getFilterName()});
 
         FilterRegistrationFactoryBean factoryBean = new FilterRegistrationFactoryBean(ProjectModeEnums.DEFAULT, securityManager, patternPathFilterMap);
 

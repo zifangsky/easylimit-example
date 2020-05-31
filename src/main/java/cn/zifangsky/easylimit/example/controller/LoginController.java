@@ -108,15 +108,8 @@ public class LoginController {
             HttpSession session = request.getSession();
             session.setAttribute(Constants.SESSION_USER, access.getPrincipalInfo().getPrincipal());
 
-            //2. 返回给页面的数据
+            //3. 返回给页面的数据
             result.put("code",200);
-            //登录成功之后的回调地址
-//            String redirectUrl = (String) session.getAttribute(Constants.SESSION_LOGIN_REDIRECT_URL);
-//            session.removeAttribute(Constants.SESSION_LOGIN_REDIRECT_URL);
-//
-//            if(StringUtils.isNoneBlank(redirectUrl)){
-//                result.put("redirect_uri", redirectUrl);
-//            }
         }catch (Exception e){
             result.put("code", 500);
             result.put("msg", "登录失败，用户名或密码错误！");
