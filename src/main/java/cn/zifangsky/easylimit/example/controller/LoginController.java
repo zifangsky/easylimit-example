@@ -6,6 +6,7 @@ import cn.zifangsky.easylimit.authc.impl.UsernamePasswordValidatedInfo;
 import cn.zifangsky.easylimit.enums.EncryptionTypeEnums;
 import cn.zifangsky.easylimit.example.Constants;
 import cn.zifangsky.easylimit.example.model.SysUser;
+import cn.zifangsky.easylimit.session.Session;
 import cn.zifangsky.easylimit.utils.SecurityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -105,10 +106,17 @@ public class LoginController {
             }
 
             //2. session中添加用户信息
-            HttpSession session = request.getSession();
+            Session session = access.getSession();
             session.setAttribute(Constants.SESSION_USER, access.getPrincipalInfo().getPrincipal());
 
             //3. 返回给页面的数据
+            //登录成功之后的回调地址
+            String redirectUrl = (String) session.getAttribute(cn.zifangsky.easylimit.common.Constants.SAVED_SOURCE_URL_NAME);
+            session.removeAttribute(cn.zifangsky.easylimit.common.Constants.SAVED_SOURCE_URL_NAME);
+
+            if(StringUtils.isNoneBlank(redirectUrl)){
+                result.put("redirect_uri", redirectUrl);
+            }
             result.put("code",200);
         }catch (Exception e){
             result.put("code", 500);
