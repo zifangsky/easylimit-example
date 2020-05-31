@@ -139,7 +139,9 @@ public class LoginController {
     @ResponseBody
     public Map<String,Object> logout(HttpServletRequest request){
         Map<String,Object> result = new HashMap<>(1);
-        HttpSession session = request.getSession();
+
+        Access access = SecurityUtils.getAccess();
+        Session session = access.getSession();
         SysUser user = (SysUser) session.getAttribute(Constants.SESSION_USER);
 
         if(user != null){
@@ -147,11 +149,7 @@ public class LoginController {
         }
 
         try {
-            //1. 移除session中的数据
-            session.removeAttribute(Constants.SESSION_USER);
-
-            //2. 退出登录
-            Access access = SecurityUtils.getAccess();
+            //1. 退出登录
             access.logout();
 
             //3. 返回状态码
