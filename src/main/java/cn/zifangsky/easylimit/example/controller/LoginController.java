@@ -4,7 +4,6 @@ import cn.zifangsky.easylimit.access.Access;
 import cn.zifangsky.easylimit.authc.ValidatedInfo;
 import cn.zifangsky.easylimit.authc.impl.UsernamePasswordValidatedInfo;
 import cn.zifangsky.easylimit.enums.EncryptionTypeEnums;
-import cn.zifangsky.easylimit.example.Constants;
 import cn.zifangsky.easylimit.example.model.SysUser;
 import cn.zifangsky.easylimit.session.Session;
 import cn.zifangsky.easylimit.utils.SecurityUtils;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -105,11 +103,9 @@ public class LoginController {
                 access.login(validatedInfo);
             }
 
-            //2. session中添加用户信息
             Session session = access.getSession();
-            session.setAttribute(Constants.SESSION_USER, access.getPrincipalInfo().getPrincipal());
 
-            //3. 返回给页面的数据
+            //2. 返回给页面的数据
             //登录成功之后的回调地址
             String redirectUrl = (String) session.getAttribute(cn.zifangsky.easylimit.common.Constants.SAVED_SOURCE_URL_NAME);
             session.removeAttribute(cn.zifangsky.easylimit.common.Constants.SAVED_SOURCE_URL_NAME);
@@ -141,8 +137,7 @@ public class LoginController {
         Map<String,Object> result = new HashMap<>(1);
 
         Access access = SecurityUtils.getAccess();
-        Session session = access.getSession();
-        SysUser user = (SysUser) session.getAttribute(Constants.SESSION_USER);
+        SysUser user = (SysUser) access.getPrincipalInfo().getPrincipal();
 
         if(user != null){
             logger.debug(MessageFormat.format("用户[{0}]正在退出登录", user.getUsername()));
@@ -152,7 +147,7 @@ public class LoginController {
             //1. 退出登录
             access.logout();
 
-            //3. 返回状态码
+            //2. 返回状态码
             result.put("code", 200);
         }catch (Exception e){
             result.put("code",500);
@@ -160,8 +155,5 @@ public class LoginController {
 
         return result;
     }
-
-
-
 
 }
